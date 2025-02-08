@@ -13,16 +13,6 @@ const templates: StarterTemplate[] = [
     query: "What are the best practices for implementing human oversight in AI systems to ensure safety and reliability while maintaining efficiency?"
   },
   {
-    title: "Decision Review",
-    description: "What's the optimal process for human review of AI decisions?",
-    query: "Explain the key components of an effective human review process for AI-generated decisions, including review criteria and feedback loops."
-  },
-  {
-    title: "AI-Human Collaboration",
-    description: "How to design effective AI-Human collaborative workflows?",
-    query: "What are the essential elements of designing AI systems that effectively collaborate with humans, ensuring both efficiency and human agency?"
-  },
-  {
     title: "Safety Protocols",
     description: "What safety measures should be in place for AI deployment?",
     query: "Detail the critical safety protocols and human intervention points needed when deploying AI systems in production environments."
@@ -36,7 +26,6 @@ interface StarterTemplatesProps {
 export default function StarterTemplates({ onTemplateSelect }: StarterTemplatesProps) {
   return (
     <div className="w-full">
-      <h2 className="text-lg text-neutral-400 mb-4 text-center">Or start with a template</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4">
         {templates.map((template, index) => (
           <button

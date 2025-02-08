@@ -31,10 +31,10 @@ const CenteredChatTextBox: React.FC<CenteredChatTextBoxProps> = ({
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4">
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold mb-4">How can I help you today?</h1>
-        <p className="text-lg text-gray-400">Ask me anything - I'm here to assist!</p>
+    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="text-center mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-4">How can I help you today?</h1>
+        <p className="text-base sm:text-lg text-gray-400">Welcome to Next-Wealth Chat - I&apos;m here to assist!</p>
       </div>
       <form onSubmit={onSubmit} className="relative shadow-2xl">
         <div className="absolute -inset-0.5 bg-gradient-to-r from-neutral-700 to-neutral-600 rounded-3xl blur opacity-30 group-hover:opacity-100 transition duration-1000"></div>
@@ -42,7 +42,7 @@ const CenteredChatTextBox: React.FC<CenteredChatTextBoxProps> = ({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className={`relative min-h-[90px] max-h-[400px] flex flex-1 w-full pt-4 pb-10 pl-5 pr-12 resize-none focus:outline-none text-xl bg-[#1C1C1C] text-white rounded-3xl border border-gray-700 focus:border-neutral-500 active:border-neutral-500 placeholder:text-gray-400 ${className}`}
+          className={`relative min-h-[60px] sm:min-h-[90px] max-h-[200px] sm:max-h-[400px] flex flex-1 w-full pt-3 sm:pt-4 pb-8 sm:pb-10 pl-4 sm:pl-5 pr-10 sm:pr-12 resize-none focus:outline-none text-base sm:text-xl bg-[#1C1C1C] text-white rounded-2xl sm:rounded-3xl border border-gray-700 focus:border-neutral-500 active:border-neutral-500 placeholder:text-gray-400 ${className}`}
           disabled={disabled}
           rows={2}
           onKeyDown={handleKeyDown}

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link"
-import { Menu, Plus, Search, Globe, Sparkles, Cloud, ChevronLeft } from "lucide-react"
+import { Plus, ChevronLeft } from "lucide-react"
 import { Button } from "./button"
 import {
   Tooltip,
@@ -13,17 +13,15 @@ import {
 interface SidebarProps {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
+  resetChat: () => void
 }
 
 const navItems = [
-  { icon: Plus, label: "New Chat", href: "/", tooltip: "Start a new conversation" },
-  { icon: Search, label: "Search", href: "/search", tooltip: "Search through your chats" },
-  { icon: Globe, label: "Discover", href: "/discover", tooltip: "Explore trending topics" },
-  { icon: Sparkles, label: "Labs", href: "/labs", tooltip: "Try experimental features" },
-  { icon: Cloud, label: "Copilot", href: "/copilot", tooltip: "AI-powered assistance" },
+  { icon: Plus, label: "New Chat", tooltip: "Start a new conversation" },
 ]
 
-export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
+export function Sidebar({ isOpen, setIsOpen, resetChat }: SidebarProps) {
+
   return (
     <TooltipProvider delayDuration={300}>
       <div className="fixed left-0 top-0 h-full z-50">
@@ -45,7 +43,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 </svg>
               </div>
               {isOpen && (
-                <span className="text-white font-semibold text-lg">AI Assistant</span>
+                <span className="text-white font-semibold text-lg">Next-Wealth</span>
               )}
             </Link>
             <Button
@@ -61,16 +59,17 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
           {/* Navigation */}
           <nav className="flex-1 p-3 space-y-2">
             {navItems.map((item) => (
-              <Tooltip key={item.href}>
+              <Tooltip key={item.label}>
                 <TooltipTrigger asChild>
-                  <Link
-                    href={item.href}
+                  <button
+                    type="button"
+                    onClick={() => resetChat()}
                     className={`flex items-center gap-4 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-[#2D2D2D] transition-colors
                       ${isOpen ? 'justify-start' : 'justify-center'}`}
                   >
                     <item.icon className="w-6 h-6" />
                     {isOpen && <span className="text-base">{item.label}</span>}
-                  </Link>
+                  </button>
                 </TooltipTrigger>
                 {!isOpen && (
                   <TooltipContent side="right" className="bg-[#2D2D2D] text-white border-[#404040]">
@@ -113,14 +112,15 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
             {/* Navigation */}
             <nav className="flex-1 p-3 space-y-2">
               {navItems.map((item) => (
-                <Tooltip key={item.href}>
+                <Tooltip key={item.label}>
                   <TooltipTrigger asChild>
-                    <Link
-                      href={item.href}
+                    <button
+                      type="button"
+                      onClick={() => resetChat()}
                       className="flex items-center justify-center px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-[#2D2D2D] transition-colors"
                     >
                       <item.icon className="w-6 h-6" />
-                    </Link>
+                    </button>
                   </TooltipTrigger>
                   <TooltipContent side="right" className="bg-[#2D2D2D] text-white border-[#404040]">
                     <p>{item.tooltip}</p>

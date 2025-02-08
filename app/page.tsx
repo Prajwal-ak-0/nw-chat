@@ -5,8 +5,8 @@ import { Loader2 } from "lucide-react";
 import ReactMarkdown, { Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sidebar } from "@/components/ui/sidebar";
+import { MobileNavbar } from "@/components/ui/mobile-navbar";
 import ChatTextBox from "./chat/ChatTextBox";
 import CenteredChatTextBox from "./chat/CenteredChatTextBox";
 import StarterTemplates from "./components/StarterTemplates";
@@ -41,8 +41,7 @@ const markdownComponents: Components = {
       {children}
     </a>
   ),
-  code: ({ node, inline, className, children, ...props }: {
-    node?: any;
+  code: ({ inline, className, children, ...props }: {
     inline?: boolean;
     className?: string;
     children?: React.ReactNode;
@@ -69,11 +68,43 @@ export default function Home() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [sessionId, setSessionId] = useState<string>("first_query");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const resetChat = () => {
+    // Clear all items from localStorage
+    localStorage.clear();
+    
+    // Reset state
+    setMessages([]);
+    setSessionId("first_query");
+    setInput("");
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  // Load messages from localStorage on initial render
+  useEffect(() => {
+    const savedMessages = localStorage.getItem('chatMessages');
+    const savedSessionId = localStorage.getItem('sessionId');
+    if (savedMessages) {
+      setMessages(JSON.parse(savedMessages));
+    }
+    if (savedSessionId) {
+      setSessionId(savedSessionId);
+    }
+  }, []);
+
+  // Save messages and sessionId to localStorage whenever they change
+  useEffect(() => {
+    if (sessionId !== "first_query") {
+      localStorage.setItem('chatMessages', JSON.stringify(messages));
+      localStorage.setItem('sessionId', sessionId);
+    }
+  }, [messages, sessionId]);
 
   useEffect(() => {
     scrollToBottom();
@@ -86,6 +117,9 @@ export default function Home() {
     const userMessage = input.trim();
     setInput("");
     
+    // If this is a new session, we don't need to clear localStorage here
+    // as it will be handled by the messages/sessionId useEffect
+    
     // Add user message to chat
     setMessages(prev => [...prev, { role: "user", content: userMessage }]);
     setIsLoading(true);
@@ -97,7 +131,10 @@ export default function Home() {
           "Content-Type": "application/json",
           "Accept": "application/json"
         },
-        body: JSON.stringify({ query: userMessage })
+        body: JSON.stringify({ 
+          query: userMessage,
+          session_id: sessionId
+        })
       });
 
       if (!response.ok) {
@@ -106,6 +143,11 @@ export default function Home() {
 
       const data = await response.json();
       
+      // Update session ID if this was the first query
+      if (sessionId === "first_query" && data.conversation_id) {
+        setSessionId(String(data.conversation_id));
+      }
+
       setMessages(prev => [...prev, { 
         role: "assistant", 
         content: data.response || "No response received from server"
@@ -123,13 +165,34 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#0C0C0C] text-white flex">
-      <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+      {/* Mobile Navbar - only visible on mobile/tablet */}
+      <MobileNavbar 
+        resetChat={() => {
+          setMessages([]);
+          setSessionId("first_query");
+          setInput("");
+        }} 
+      />
+
+      {/* Sidebar - only visible on desktop */}
+      <div className="hidden lg:block">
+        <Sidebar 
+          isOpen={isSidebarOpen} 
+          setIsOpen={setIsSidebarOpen} 
+          resetChat={() => {
+            setMessages([]);
+            setSessionId("first_query");
+            setInput("");
+          }} 
+        />
+      </div>
 
       <main className={`
         flex-1
         transform-gpu transition-all duration-300 ease-in-out
-        ${isSidebarOpen ? 'ml-80' : 'ml-20'}
+        ${isSidebarOpen ? 'lg:ml-80' : 'lg:ml-20'}
         relative h-screen overflow-hidden
+        ${messages.length > 0 ? 'pt-16 lg:pt-0' : 'pt-16 lg:pt-0'}
       `}>
         {messages.length === 0 ? (
           <div className="flex-1 flex items-center justify-center h-full">
@@ -151,17 +214,17 @@ export default function Home() {
           </div>
         ) : (
           <>
-            <div className="absolute inset-0 max-w-4xl w-full mx-auto px-4 pb-36 overflow-hidden">
+            <div className="absolute inset-0 max-w-4xl w-full mx-auto px-2 sm:px-4 pb-28 sm:pb-36 overflow-hidden">
               <div className="h-full overflow-y-auto" id="messages-container">
-                <div className="space-y-8 pt-8">
+                <div className="space-y-8 lg:pt-8 pt-20">
 
                 {messages.map((message, index) => (
                   <div
                     key={index}
-                    className={`flex ${message.role === "assistant" ? "justify-start" : "justify-end ml-32"}`}
+                    className={`flex ${message.role === "assistant" ? "justify-start" : "justify-end sm:ml-16 md:ml-24 lg:ml-32"}`}
                   >
                     <div
-                      className={`max-w-[85%] rounded-3xl px-6 pt-4 ${message.role === "assistant" ? "bg-[#1C1C1C] text-white" : "bg-neutral-700 text-white"}`}
+                      className={`max-w-[90%] sm:max-w-[85%] rounded-2xl sm:rounded-3xl px-4 sm:px-6 pt-3 sm:pt-4 ${message.role === "assistant" ? "bg-[#1C1C1C] text-white" : "bg-neutral-700 text-white"}`}
                     >
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
