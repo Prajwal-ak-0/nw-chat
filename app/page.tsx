@@ -10,6 +10,7 @@ import { MobileNavbar } from "@/components/ui/mobile-navbar";
 import ChatTextBox from "./chat/ChatTextBox";
 import CenteredChatTextBox from "./chat/CenteredChatTextBox";
 import StarterTemplates from "./components/StarterTemplates";
+import { API_URL } from "@/config/api";
 
 const markdownComponents: Components = {
   h1: ({ children }) => (
@@ -125,7 +126,7 @@ export default function Home() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8000/chat", {
+      const response = await fetch(`${API_URL}/chat`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
