@@ -14,28 +14,28 @@ import { API_URL } from "@/config/api";
 
 const markdownComponents: Components = {
   h1: ({ children }) => (
-    <h1 className="text-3xl font-bold mt-8 mb-4 text-white">{children}</h1>
+    <h1 className="text-3xl font-bold mt-8 mb-4 text-foreground">{children}</h1>
   ),
   h2: ({ children }) => (
-    <h2 className="text-2xl font-semibold mt-6 mb-3 text-white">{children}</h2>
+    <h2 className="text-2xl font-semibold mt-6 mb-3 text-foreground">{children}</h2>
   ),
   h3: ({ children }) => (
-    <h3 className="text-xl font-medium mt-4 mb-2 text-white">{children}</h3>
+    <h3 className="text-xl font-medium mt-4 mb-2 text-foreground">{children}</h3>
   ),
   p: ({ children }) => (
-    <p className="text-xl leading-relaxed mb-4 text-white">{children}</p>
+    <p className="text-base sm:text-lg md:text-xl leading-relaxed mb-3 sm:mb-4 text-foreground">{children}</p>
   ),
   ul: ({ children }) => (
-    <ul className="list-disc text-xl pl-6 mb-4 space-y-2 text-white">{children}</ul>
+    <ul className="list-disc text-base sm:text-lg md:text-xl pl-4 sm:pl-6 mb-3 sm:mb-4 space-y-1.5 sm:space-y-2 text-foreground">{children}</ul>
   ),
   ol: ({ children }) => (
-    <ol className="list-decimal pl-6 mb-4 space-y-2 text-white">{children}</ol>
+    <ol className="list-decimal pl-4 sm:pl-6 mb-3 sm:mb-4 space-y-1.5 sm:space-y-2 text-foreground text-base sm:text-lg md:text-xl">{children}</ol>
   ),
   li: ({ children }) => <li className="pl-2">{children}</li>,
   a: ({ children, href }) => (
     <a
       href={href}
-      className="text-neutral-400 hover:text-neutral-300 underline"
+      className="text-primary hover:text-primary/80 underline"
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -48,7 +48,7 @@ const markdownComponents: Components = {
     children?: React.ReactNode;
   } & React.HTMLAttributes<HTMLElement>) => (
     <code
-      className={`${className} ${inline ? 'text-neutral-300 bg-neutral-800 px-1 py-0.5 rounded' : 'block bg-neutral-800 p-4 rounded-lg overflow-x-auto'}`}
+      className={`${className} ${inline ? 'text-primary bg-muted px-1 py-0.5 rounded' : 'block bg-muted p-4 rounded-lg overflow-x-auto'}`}
       {...props}
     >
       {children}
@@ -126,6 +126,7 @@ export default function Home() {
     setIsLoading(true);
 
     try {
+      console.log(`${API_URL}/chat`)
       const response = await fetch(`${API_URL}/chat`, {
         method: "POST",
         headers: { 
@@ -165,7 +166,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0C0C0C] text-white flex">
+    <div className="min-h-screen flex">
       {/* Mobile Navbar - only visible on mobile/tablet */}
       <MobileNavbar 
         resetChat={() => {
@@ -197,7 +198,7 @@ export default function Home() {
       `}>
         {messages.length === 0 ? (
           <div className="flex-1 flex items-center justify-center h-full">
-            <div className="max-w-4xl w-full space-y-8">
+            <div className="max-w-3xl sm:max-w-4xl w-full space-y-6 sm:space-y-8 px-3 sm:px-4">
               <CenteredChatTextBox
                 value={input}
                 onChange={setInput}
@@ -206,18 +207,18 @@ export default function Home() {
                 disabled={isLoading}
               />
               <StarterTemplates 
-                onTemplateSelect={(query) => {
-                  setInput(query);
-                  handleSubmit({ preventDefault: () => {} } as React.FormEvent);
-                }} 
+                onNewMessage={(message) => setMessages(prev => [...prev, message])}
+                sessionId={sessionId}
+                setSessionId={setSessionId}
+                setIsLoading={setIsLoading}
               />
             </div>
           </div>
         ) : (
           <>
-            <div className="absolute inset-0 max-w-4xl w-full mx-auto px-2 sm:px-4 pb-28 sm:pb-36 overflow-hidden">
+            <div className="absolute inset-0 max-w-3xl sm:max-w-4xl w-full mx-auto px-2 sm:px-4 pb-24 sm:pb-28 md:pb-36 overflow-hidden">
               <div className="h-full overflow-y-auto" id="messages-container">
-                <div className="space-y-8 lg:pt-8 pt-20">
+                <div className="space-y-6 sm:space-y-8 pt-16 sm:pt-18 lg:pt-8">
 
                 {messages.map((message, index) => (
                   <div
@@ -225,7 +226,8 @@ export default function Home() {
                     className={`flex ${message.role === "assistant" ? "justify-start" : "justify-end sm:ml-16 md:ml-24 lg:ml-32"}`}
                   >
                     <div
-                      className={`max-w-[90%] sm:max-w-[85%] rounded-2xl sm:rounded-3xl px-4 sm:px-6 pt-3 sm:pt-4 ${message.role === "assistant" ? "bg-[#1C1C1C] text-white" : "bg-neutral-700 text-white"}`}
+                      className={`max-w-[92%] sm:max-w-[85%] rounded-xl sm:rounded-2xl md:rounded-3xl px-3 sm:px-4 md:px-6 pt-2 sm:py-4
+                        ${message.role === "assistant" ? "bg-white text-black" : "bg-[#f2f2f2] text-white"}`}
                     >
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
@@ -240,7 +242,7 @@ export default function Home() {
                 ))}
                 {isLoading && (
                   <div className="flex justify-center mb-4">
-                    <Loader2 className="h-6 w-6 animate-spin text-neutral-500" />
+                    <Loader2 className="h-5 w-5 sm:h-6 sm:w-6 animate-spin text-neutral-500" />
                   </div>
                 )}
                 <div ref={messagesEndRef} />
@@ -248,7 +250,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="absolute bottom-0 left-0 right-0 bg-[#0C0C0C] border-t border-neutral-800">
+            <div className="absolute bottom-0 left-0 right-0 border-t bg-white">
               <div className="max-w-4xl mx-auto px-4">
                 <ChatTextBox
                   value={input}

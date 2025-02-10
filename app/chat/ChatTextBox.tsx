@@ -31,20 +31,23 @@ const ChatTextBox: React.FC<ChatTextBoxProps> = ({
   };
 
   return (
-    <div className="w-full py-2 sm:py-4">
-      <form onSubmit={onSubmit} className="max-w-4xl mx-auto relative px-3 sm:px-4">
+    <div className="w-full py-2 sm:py-3 md:py-4 fixed bottom-0 left-0 bg-white border-t border-gray-100">
+      <form onSubmit={onSubmit} className="max-w-3xl sm:max-w-4xl mx-auto relative px-2 sm:px-3 md:px-4">
         <Textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className={`min-h-[60px] sm:min-h-[90px] max-h-[200px] sm:max-h-[400px] flex flex-1 w-full pt-3 sm:pt-4 pb-8 sm:pb-10 pl-4 sm:pl-5 pr-10 sm:pr-12 resize-none focus:outline-none text-base sm:text-xl bg-[#1C1C1C] text-white rounded-2xl sm:rounded-3xl border border-gray-700 focus:border-neutral-600 active:border-neutral-600 placeholder:text-gray-400 ${className}`}
+          style={{
+            backgroundColor: "#e1e1e1",
+          }}
+          className={`min-h-[50px] sm:min-h-[60px] md:min-h-[90px] max-h-[150px] sm:max-h-[200px] md:max-h-[400px] flex flex-1 w-full pt-2.5 sm:pt-3 md:pt-4 pb-7 sm:pb-8 md:pb-10 pl-3 sm:pl-4 md:pl-5 pr-9 sm:pr-10 md:pr-12 resize-none focus:outline-none text-sm sm:text-base md:text-xl rounded-xl sm:rounded-2xl md:rounded-3xl border-0 focus:ring-0 focus:ring-offset-0 ${className}`}
           disabled={disabled}
           rows={2}
           onKeyDown={handleKeyDown}
         />
         <button 
           type="submit"
-          className="absolute right-5 sm:right-6 bottom-2.5 sm:bottom-4 p-1.5 sm:p-2 text-white bg-neutral-700 hover:bg-neutral-600 rounded-lg sm:rounded-xl transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="absolute right-3.5 sm:right-4 md:right-5 bottom-2 sm:bottom-2.5 md:bottom-3 p-1.5 sm:p-1.5 md:p-2 text-black bg-green-600 hover:bg-green-700 rounded-lg sm:rounded-xl transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={disabled || !value.trim()}
         >
           <SendHorizontal className="h-4 w-4 sm:h-5 sm:w-5" />

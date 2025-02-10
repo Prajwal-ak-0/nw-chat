@@ -9,22 +9,19 @@ interface MobileNavbarProps {
 
 export function MobileNavbar({ resetChat }: MobileNavbarProps) {
   return (
-    <div className="fixed top-0 left-0 right-0 h-16 bg-[#161616] border-b border-[#2D2D2D] flex items-center justify-between px-4 sm:px-6 lg:hidden z-50">
+    <div className="fixed top-0 left-0 right-0 h-14 sm:h-16 bg-white border-b border-gray-200 flex items-center justify-between px-3 sm:px-4 md:px-6 lg:hidden z-50">
       <Link href="/" className="flex items-center gap-3">
-        <div className="w-8 h-8 flex items-center justify-center">
-          <svg className="w-6 h-6 text-white" viewBox="0 0 24 24">
-            <path fill="currentColor" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-          </svg>
+        <div className="w-24 sm:w-28 md:w-32 h-8 sm:h-10 md:h-12 flex items-center justify-center">
+          <img src="/logo.webp" alt="Next-Wealth Logo" className="w-full h-full object-contain" />
         </div>
-        <span className="text-white font-semibold text-lg">Next-Wealth</span>
       </Link>
       
       <button
         onClick={resetChat}
-        className="flex items-center justify-center w-10 h-10 rounded-lg text-gray-400 hover:text-white hover:bg-[#2D2D2D] transition-colors"
+        className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-lg text-gray-600 hover:text-green-600 hover:bg-gray-100 transition-colors"
         aria-label="New Conversation"
       >
-        <Plus className="w-6 h-6" />
+        <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
       </button>
     </div>
   );

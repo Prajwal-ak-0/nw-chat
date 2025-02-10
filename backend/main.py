@@ -26,7 +26,20 @@ app.add_middleware(
 )
 
 # Initialize OpenAI client
-openai.api_key = os.getenv("OPENAI_API_KEY")
+from openai import OpenAI
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Get API key from environment
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    raise ValueError("OPENAI_API_KEY not found in environment variables")
+
+# Initialize OpenAI client
+client = OpenAI(api_key=api_key)
 
 # Pydantic model for chat request
 from pydantic import BaseModel
@@ -68,23 +81,24 @@ async def chat(request: ChatRequest):
                 <query>{query}</query>
                 """
 
-                response = await asyncio.wait_for(
-                    openai.ChatCompletion.acreate(
-                        model="gpt-4o-mini",
-                        messages=[{
-                            "role": "system",
-                            "content": system_prompt.format(
-                                query=request.query,
-                                context=previous_context
-                            )
-                        }],
-                        temperature=0.7,
-                        max_tokens=1000
-                    ),
-                    timeout=30.0  # 30 second timeout
-                )
-                
-                assistant_response = response.choices[0].message.content
+                logger.info(f"Making API request with session_id: {request.session_id}")
+                try:
+                    response = client.chat.completions.create(
+                            model="gpt-4o-mini",
+                            messages=[{
+                                "role": "system",
+                                "content": system_prompt.format(
+                                    query=request.query,
+                                    context=previous_context
+                                )
+                            }]
+                        )
+                    
+                    assistant_response = response.choices[0].message.content
+                    logger.info("Successfully received API response")
+                except Exception as e:
+                    logger.error(f"OpenAI API error: {str(e)}")
+                    raise e
                 new_context_summary = previous_context  # Keep the same context for follow-ups
 
             else:
@@ -102,20 +116,21 @@ async def chat(request: ChatRequest):
                 <query>{query}</query>
                 """
 
-                response = await asyncio.wait_for(
-                    openai.ChatCompletion.acreate(
-                        model="gpt-4o-mini",
-                        messages=[{
-                            "role": "system",
-                            "content": system_prompt.format(query=request.query)
-                        }],
-                        temperature=0.7,
-                        max_tokens=1000
-                    ),
-                    timeout=30.0  # 30 second timeout
-                )
-                
-                assistant_response = response.choices[0].message.content
+                logger.info("Making initial API request")
+                try:
+                    response = client.chat.completions.create(
+                            model="gpt-4o-mini",
+                            messages=[{
+                                "role": "system",
+                                "content": system_prompt.format(query=request.query)
+                            }]
+                        )
+                    
+                    assistant_response = response.choices[0].message.content
+                    logger.info("Successfully received initial API response")
+                except Exception as e:
+                    logger.error(f"OpenAI API error: {str(e)}")
+                    raise e
 
                 # Generate conversation summary using LLM
                 summary_prompt = PromptTemplates.get_context_summary_prompt(
@@ -124,17 +139,18 @@ async def chat(request: ChatRequest):
                     response=assistant_response
                 )
 
-                summary_response = await asyncio.wait_for(
-                    openai.ChatCompletion.acreate(
-                        model="gpt-4o-mini",
-                        messages=[{"role": "system", "content": summary_prompt}],
-                        temperature=0.7,
-                        max_tokens=500
-                    ),
-                    timeout=30.0
-                )
+                logger.info("Making summary API request")
+                try:
+                    summary_response = client.chat.completions.create(
+                            model="gpt-4o-mini",
+                            messages=[{"role": "system", "content": summary_prompt}]
+                        )
 
-                new_context_summary = summary_response.choices[0].message.content
+                    new_context_summary = summary_response.choices[0].message.content
+                    logger.info("Successfully received summary API response")
+                except Exception as e:
+                    logger.error(f"OpenAI API error in summary: {str(e)}")
+                    raise e
 
             # Save assistant message and update context
             db.save_message(conversation_id, assistant_response, "assistant")

@@ -24,32 +24,27 @@ export function Sidebar({ isOpen, setIsOpen, resetChat }: SidebarProps) {
 
   return (
     <TooltipProvider delayDuration={300}>
-      <div className="fixed left-0 top-0 h-full z-50">
+      <div className="fixed left-0 top-0 h-full z-50 hidden md:block">
         {/* Expanded sidebar */}
         <div 
           className={`
-            fixed left-0 top-0 h-full w-80 bg-[#161616] border-r border-[#2D2D2D]
+            fixed left-0 top-0 h-full w-[280px] sm:w-[300px] md:w-80 bg-white border-r border-gray-200
             transform-gpu transition-all duration-300 ease-in-out
             ${isOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'}
           `}
         >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="p-4 flex items-center justify-between border-b border-[#2D2D2D] h-16">
+          <div className="p-4 flex items-center justify-between border-b border-gray-200 h-16">
             <Link href="/" className="flex items-center gap-3">
-              <div className="w-8 h-8 flex items-center justify-center">
-                <svg className="w-6 h-6 text-white" viewBox="0 0 24 24">
-                  <path fill="currentColor" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                </svg>
+              <div className={`flex items-center justify-center ${isOpen ? 'w-48 sm:w-52 md:w-60 h-10 sm:h-11 md:h-12' : 'w-8 h-8'} transition-all duration-300`}>
+                <img src="/logo.webp" alt="Next-Wealth Logo" className={`${isOpen ? 'w-full h-full' : 'w-8 h-8'} object-contain transition-all duration-300`} />
               </div>
-              {isOpen && (
-                <span className="text-white font-semibold text-lg">Next-Wealth</span>
-              )}
             </Link>
             <Button
               variant="ghost"
               size="icon"
-              className="text-gray-400 hover:text-white hover:bg-[#2D2D2D]"
+              className="text-gray-600 hover:text-black hover:bg-gray-100"
               onClick={() => setIsOpen(!isOpen)}
             >
               <ChevronLeft className={`h-5 w-5 transition-transform duration-300 ${isOpen ? '' : 'rotate-180'}`} />
@@ -64,7 +59,7 @@ export function Sidebar({ isOpen, setIsOpen, resetChat }: SidebarProps) {
                   <button
                     type="button"
                     onClick={() => resetChat()}
-                    className={`flex items-center gap-4 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-[#2D2D2D] transition-colors
+                    className={`flex items-center gap-4 px-4 py-3 rounded-lg text-gray-600 hover:text-black hover:bg-gray-100 transition-colors
                       ${isOpen ? 'justify-start' : 'justify-center'}`}
                   >
                     <item.icon className="w-6 h-6" />
@@ -72,7 +67,7 @@ export function Sidebar({ isOpen, setIsOpen, resetChat }: SidebarProps) {
                   </button>
                 </TooltipTrigger>
                 {!isOpen && (
-                  <TooltipContent side="right" className="bg-[#2D2D2D] text-white border-[#404040]">
+                  <TooltipContent side="right" className="bg-white text-black border border-gray-200 shadow-lg">
                     <p>{item.tooltip}</p>
                   </TooltipContent>
                 )}
@@ -84,25 +79,23 @@ export function Sidebar({ isOpen, setIsOpen, resetChat }: SidebarProps) {
         {/* Collapsed sidebar */}
         <div 
           className={`
-            fixed left-0 top-0 h-full w-20 bg-[#161616] border-r border-[#2D2D2D]
+            fixed left-0 top-0 h-full w-16 sm:w-18 md:w-20 bg-white border-r border-gray-200
             transform-gpu transition-all duration-300 ease-in-out
             ${isOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}
           `}
         >
           <div className="flex flex-col h-full">
             {/* Header */}
-            <div className="p-4 flex items-center justify-between border-b border-[#2D2D2D] h-16">
+            <div className="p-4 flex items-center justify-between border-b border-gray-200 h-16">
               <Link href="/" className="flex items-center justify-center">
                 <div className="w-8 h-8 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-white" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                  </svg>
+                  <img src="/logo.webp" alt="Next-Wealth Logo" className="w-6 h-6 object-contain" />
                 </div>
               </Link>
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-gray-400 hover:text-white hover:bg-[#2D2D2D]"
+                className="text-gray-600 hover:text-black hover:bg-gray-100"
                 onClick={() => setIsOpen(!isOpen)}
               >
                 <ChevronLeft className={`h-5 w-5 transition-transform duration-300 ${isOpen ? '' : 'rotate-180'}`} />
@@ -117,12 +110,12 @@ export function Sidebar({ isOpen, setIsOpen, resetChat }: SidebarProps) {
                     <button
                       type="button"
                       onClick={() => resetChat()}
-                      className="flex items-center justify-center px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-[#2D2D2D] transition-colors"
+                      className="flex items-center justify-center px-4 py-3 rounded-lg text-gray-600 hover:text-black hover:bg-gray-100 transition-colors"
                     >
                       <item.icon className="w-6 h-6" />
                     </button>
                   </TooltipTrigger>
-                  <TooltipContent side="right" className="bg-[#2D2D2D] text-white border-[#404040]">
+                  <TooltipContent side="right" className="bg-white text-black border border-gray-200 shadow-lg">
                     <p>{item.tooltip}</p>
                   </TooltipContent>
                 </Tooltip>
