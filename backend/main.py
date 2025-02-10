@@ -4,9 +4,10 @@ from typing import AsyncGenerator
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import openai
 from fastapi.responses import StreamingResponse
 import asyncio
+from openai import OpenAI
+import logging
 
 # Load environment variables
 load_dotenv()
@@ -25,9 +26,9 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-# Initialize OpenAI client
-from openai import OpenAI
-import logging
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -49,10 +50,6 @@ class ChatRequest(BaseModel):
     session_id: str = "first_query"
 
     # No keyword check needed as LLM will handle topic filtering
-
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy"}
 
 @app.get("/")
 async def root():
@@ -181,5 +178,4 @@ async def chat(request: ChatRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.getenv("PORT", "8000"))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
